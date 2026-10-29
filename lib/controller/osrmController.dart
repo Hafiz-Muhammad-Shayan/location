@@ -93,6 +93,7 @@ class OSRMController extends GetxController {
   }
 
   // Route Fetch Karne Ka Function (Live Current Location -> Tapped Destination)
+  // Route Fetch Karne Ka Function (Live Current Location -> Tapped Destination)
   Future<void> fetchRoute() async {
     if (!hasCurrentLocation.value) {
       Get.snackbar("Alert", "Pehle 'My Location' button daba kar apni current location fetch karein!");
@@ -112,7 +113,15 @@ class OSRMController extends GetxController {
 
       final url = "https://router.project-osrm.org/route/v1/driving/$startCoord;$endCoord?overview=full&geometries=geojson";
 
-      final response = await dio.get(url);
+      // 🛑 YAHAN OPTIONS AUR USER-AGENT ADD KAREIN:
+      final response = await dio.get(
+        url,
+        options: Options(
+          headers: {
+            'User-Agent': 'osrmtutorial/1.0 (flutter app; contact@example.com)',
+          },
+        ),
+      );
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -122,14 +131,12 @@ class OSRMController extends GetxController {
 
         final coords = data["routes"][0]["geometry"]["coordinates"] as List;
 
-        routeCoordinates.clear() ;
+        routeCoordinates.clear();
 
-        for (var coord in coords ) {
-        double lng = coord[0] ;
-        double lat = coord[1] ;
-        routeCoordinates.add(LatLng(lat, lng)) ;
-
-        print("route coordinates loading : ${routeCoordinates.length} points " ) ;
+        for (var coord in coords) {
+          double lng = coord[0];
+          double lat = coord[1];
+          routeCoordinates.add(LatLng(lat, lng));
         }
 
         double distanceInKm = distanceInMeters / 1000;
@@ -142,8 +149,22 @@ class OSRMController extends GetxController {
       }
     } catch (e) {
       print("API Error: $e");
+      Get.snackbar("Error", "Route fetch karne mein masla aaya: $e");
     } finally {
       isLoading.value = false;
     }
   }
+
+  void clearRoute() {
+    tappedLat.value = 0.0 ;
+    tappedLng.value = 0.0 ;
+    distanceText.value = "" ;
+    durationText.value = "" ;
+    hasCurrentLocation.value = false ;
+    routeCoordinates.clear() ;
+    hasDestination.value = false ;
+    Get.snackbar("Reset", "Route cleared successfully!");
+    print("Route and destination cleared.");
+
+}
 }

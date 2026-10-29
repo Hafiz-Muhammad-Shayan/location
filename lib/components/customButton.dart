@@ -22,13 +22,14 @@ class CustomButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(10),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10)
+        padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5)
       ),
         onPressed: onPressed,
         child: Text(
           text ,
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 14,
+            color: Colors.white,
             fontWeight: FontWeight.bold ,
 
           ),

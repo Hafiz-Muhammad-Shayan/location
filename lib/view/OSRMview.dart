@@ -58,6 +58,7 @@ class OSRMView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
+
                     // Button 2: OSRM Route calculate karne ke liye
                     Expanded(
                       child: Obx(() => controller.isLoading.value
@@ -85,6 +86,16 @@ class OSRMView extends StatelessWidget {
                         },
                       )),
                     ),
+                    const SizedBox(width: 10),
+
+                    Expanded(
+                      child: CustomButton(
+                        text: 'Reset Route',
+                        onPressed: () {
+                          controller.clearRoute();
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -106,7 +117,7 @@ class OSRMView extends StatelessWidget {
               children: [
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.app',
+                  userAgentPackageName: 'com.example.osrmtutorial', // <-- Apne app ki actual applicationId yahan likhein
                 ),
                 // poliline layer
                 Obx(() => PolylineLayer(
