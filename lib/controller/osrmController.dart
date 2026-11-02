@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:latlong2/latlong.dart';
@@ -22,7 +24,50 @@ class OSRMController extends GetxController {
   var durationText = "".obs;
   var isLoading = false.obs;
 
+  // 4. PolyLine
   var routeCoordinates = <LatLng>[].obs;
+
+  // 5. SearchBar
+  var searchResults = [].obs;
+  var isSearching = false.obs;
+
+  // searching api
+
+  Future<void> searchPlaces(String query) async {
+    if(query.isEmpty) {
+      searchResults.clear() ;
+      return ;
+    }
+    
+    isSearching.value = true ;
+    try{
+      final url = 'https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=5';
+
+      final response = await dio.get(
+        url,
+        options: Options(
+          headers: {
+            'User-Agent': 'osrmtutorial_app', // Nominatim ke liye user-agent lazmi hota hai
+          },
+        ),
+      );
+
+      if(response.statusCode == 200){
+        searchResults.value = response.data;
+      }
+
+
+    }catch(e){
+      print("Search Error : $e") ;
+
+    }finally{
+      isSearching.value = false ;
+    }
+    
+
+}
+
+
 
   // Real GPS Location Fetch Karne Ka Function
   Future<void> getCurrentLocation() async {
@@ -167,4 +212,6 @@ class OSRMController extends GetxController {
     print("Route and destination cleared.");
 
 }
+
+
 }

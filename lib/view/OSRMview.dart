@@ -29,6 +29,56 @@ class OSRMView extends StatelessWidget {
             child: Column(
               children: [
                 // Distance aur Duration Display (Obx ke sath reactive)
+                TextFormField(
+                onChanged: (value) {
+                  controller.searchPlaces(value) ;
+                },
+                  decoration: InputDecoration(
+                    filled: true ,
+                    fillColor: Colors.grey[200] ,
+                    hintText: "Search Places" ,
+                    prefixIcon:  const Icon(Icons.search) ,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide.none ,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                  ),
+
+                ),
+
+                Obx(() => controller.searchResults.isNotEmpty ?
+                    Container(
+                    height: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(color: Colors.black12, blurRadius: 4, spreadRadius: 1),
+                        ],
+                      ),
+                  child: ListView.builder(
+                    itemCount: controller.searchResults.length ,
+                    itemBuilder: (context, index) {
+                      final place = controller.searchResults[index] ;
+                      return ListTile(
+                        title: Text(place['display_name'],maxLines: 1,overflow: TextOverflow.ellipsis,) ,
+                        onTap: () {
+                          double lat = double.parse(place['lat']) ;
+                          double lng = double.parse(place['lon']) ;
+                          controller.onMapTapped(LatLng(lat, lng)) ;
+                          mapController.move(LatLng(lat, lng), 15.0);
+                          controller.searchResults.clear() ;
+
+                        },
+                      );
+
+                    },
+                  ),
+                )
+                    : const SizedBox() ,
+                ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
